@@ -1,0 +1,5 @@
+openai
+pillow
+azure-storage-blob 
+selenium
+python-dotenv
