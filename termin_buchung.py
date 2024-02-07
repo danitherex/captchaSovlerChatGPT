@@ -6,7 +6,8 @@ from selenium.common.exceptions import TimeoutException
 from dotenv import load_dotenv
 import os
 import json
-from captcha import get_captcha_code,upload_image
+from captcha import get_captcha_code
+from uploadImage import upload_image_from_base64
 
 load_dotenv()
 
@@ -88,7 +89,7 @@ def sign_up():
                 if(captcha):
                     #Captcha handling here
                     captcha_base64_image = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.width100"))).get_attribute("src")
-                    captcha_url = upload_image(captcha_base64_image)
+                    captcha_url = upload_image_from_base64(captcha_base64_image)
                     captcha_code = get_captcha_code(captcha_url)
                     captcha_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "BS_F_captcha")))
                     captcha_input.send_keys(captcha_code)

@@ -1,70 +1,27 @@
-from openai import OpenAI
-import base64
-from PIL import Image
-from io import BytesIO
+from azure.ai.vision.imageanalysis import ImageAnalysisClient
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.vision.imageanalysis.models import VisualFeatures
+from dotenv import load_dotenv
 import os
-import uuid
-from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
+import re  
+
 
 def get_captcha_code(imageUrl):
+    endpoint = os.getenv("AZURE_VISION_ENDPOINT")
+    apiKey = os.getenv("AZURE_VISION_KEY")
 
-    client = OpenAI()
-    result = client.chat.completions.create(
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {"type":"text",
-                    "text":"Print out all letters or numbers visible in the right order on this image. Do not print out anything else. Just the letters and numbers. Don't include whitespaces"
-                    },
-                    {"type":"image_url",
-                    "image_url": {
-                        "url":imageUrl
-                    }
-                    }
-                ],
+    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(apiKey))
 
-            }
-        ],
-        max_tokens=300,
-        model="gpt-4-vision-preview",
 
+    result = client.analyze(
+        image_url=imageUrl,
+        visual_features=[VisualFeatures.READ],
     )
 
-    captcha_code = result.choices[0].message.content
-    return captcha_code
-
-
-def upload_image(base64_string):
-    imageFile = convert_base64_to_image(base64_string)
-    
-    connection_string = os.getenv('AZURE_CONNECTION_STRING')
-    container_name = os.getenv('AZURE_BLOB_CONTAINER_NAME')
-    
-    try:
-        # Create the BlobServiceClient that is used to call the Blob service for the storage account
-        blob_service_client = BlobServiceClient.from_connection_string(connection_string)
+    word = ""
+    if result.read is not None:
+        for line in result.read.blocks[0].lines:
+            cleaned_text = re.sub(r'[^a-zA-Z0-9]', '', line.text)
+            word += cleaned_text
+    return word
         
-        # Create the BlobClient to interact with the blob
-        blob_client = blob_service_client.get_blob_client(container=container_name, blob=imageFile)
-
-        # Upload the file
-        with open(imageFile, "rb") as data:
-            blob_client.upload_blob(data, overwrite=True)
-            print(f"File {imageFile} uploaded to Azure Blob Storage.")
-            
-        blob_url = f"{blob_client.url}"
-        print(f"Blob URL: {blob_url}")
-        return blob_url
-        
-    except Exception as ex:
-        print('Exception:')
-        print(ex)
-    
-def convert_base64_to_image(base64_string):
-    base64_image = base64_string.split(',')[1]
-    image_data = base64.b64decode(base64_image)
-    image = Image.open(BytesIO(image_data))
-    random_file_name = f"{uuid.uuid4()}.png"
-    image.save(random_file_name)
-    return random_file_name
