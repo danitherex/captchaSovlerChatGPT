@@ -2,4 +2,6 @@ openai
 pillow
 azure-storage-blob 
 selenium
+opencv-python
 python-dotenv
+pytesseract

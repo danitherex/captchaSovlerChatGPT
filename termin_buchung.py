@@ -6,8 +6,8 @@ from selenium.common.exceptions import TimeoutException
 from dotenv import load_dotenv
 import os
 import json
-#from captcha import get_captcha_code_azure,get_captcha_code_google
-#from uploadImage import upload_image_from_base64
+from captcha import get_captcha_code
+from uploadImage import upload_image_from_base64
 
 load_dotenv(".env",override=True)
 
@@ -22,7 +22,10 @@ target_weekday_time = json.loads(os.getenv("WEEKDAYS"))
 
 def sign_up():
 
-    driver = webdriver.Chrome()
+    options = webdriver.ChromeOptions()
+    options.add_argument('--headless')
+
+    driver = webdriver.Chrome(options=options)
 
     driver.get(sport_url)
     
@@ -44,7 +47,7 @@ def sign_up():
             cookie_notice_accept_button.click()
         except Exception as e:
             print("Cookie notice not found or could not be closed.", str(e))
-        buchenBtn = WebDriverWait(row, 30).until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".bs_btn_buchen")))
+        buchenBtn = WebDriverWait(row, 120).until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".bs_btn_buchen")))
 
         buchenBtn.click()
         
@@ -85,33 +88,26 @@ def sign_up():
                 
                 continueButton = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "bs_submit")))
                 continueButton.click()
-                #captcha_url=""
-                #captcha_input=None
                 if(captcha):
                     #Captcha handling here
-                    #captcha_base64_image = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.width100"))).get_attribute("src")
-                    #captcha_url = upload_image_from_base64(captcha_base64_image)
-                    #captcha_code = get_captcha_code_azure(captcha_url)
-                    #captcha_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "BS_F_captcha")))
-                    #captcha_input.send_keys(captcha_code)
-                    #print(captcha_code) 
-                    captcha_input = WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.ID, "BS_F_captcha"))) 
-              
+                    captcha_base64_image = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.width100"))).get_attribute("src")
+                    captcha_url = upload_image_from_base64(captcha_base64_image)
+                    captcha_code = get_captcha_code(captcha_url)
+                    captcha_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "BS_F_captcha")))
+                    captcha_input.send_keys(captcha_code)
+                    print(captcha_code)               
                 
                 binding_booking = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.bs_right > input:nth-child(1)")))
                 binding_booking.click()
                 try:
-                    errorKey = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#bs_form_main > div.bs_form_row.bs_exspace > div.bs_text_red.bs_text_big")))
+                    WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#bs_form_main > div.bs_form_row.bs_exspace > div.bs_text_red.bs_text_big")))
                     print("Booking failed")
-                    #if(captcha):
-                        #try:
-                            #captcha_code = get_captcha_code_google(captcha_url)
-                            #captcha_input.send_keys(captcha_code)
-                            #errorKey = WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#bs_form_main > div.bs_form_row.bs_exspace > div.bs_text_red.bs_text_big")))
-                            #print("Booking failed")
+                    if(captcha):
+                        try:
+                            WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CSS_SELECTOR, "NONEXISITANT")))
                             #sign_up()
-                        #except Exception as e:
-                        #    print("Booking successful")
+                        except Exception as e:
+                            print("Booking successful")
                 except Exception as e:
                     print("Booking successful")
 

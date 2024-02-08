@@ -4,6 +4,7 @@ from io import BytesIO
 import uuid
 from azure.storage.blob import BlobServiceClient
 import os
+from prepocessing import preprocess_image
 
 def upload_image_from_base64(base64_string):
     imageFile = convert_base64_to_image(base64_string)
@@ -11,6 +12,9 @@ def upload_image_from_base64(base64_string):
     
 
 def upload_image(imageFile):
+    
+    preprocessed_image = preprocess_image(imageFile)
+    
     connection_string = os.getenv('AZURE_CONNECTION_STRING')
     container_name = os.getenv('AZURE_BLOB_CONTAINER_NAME')
     
@@ -19,16 +23,16 @@ def upload_image(imageFile):
         blob_service_client = BlobServiceClient.from_connection_string(connection_string)
         
         # Create the BlobClient to interact with the blob
-        blob_client = blob_service_client.get_blob_client(container=container_name, blob=imageFile)
+        blob_client = blob_service_client.get_blob_client(container=container_name, blob=preprocessed_image)
 
         # Upload the file
-        with open(imageFile, "rb") as data:
+        with open(preprocessed_image, "rb") as data:
             blob_client.upload_blob(data, overwrite=True)
-            print(f"File {imageFile} uploaded to Azure Blob Storage.")
+            print(f"File {preprocessed_image} uploaded to Azure Blob Storage.")
             
         blob_url = f"{blob_client.url}"
         print(f"Blob URL: {blob_url}")
-        os.remove(imageFile)
+        #os.remove(imageFile)
 
         return blob_url
         

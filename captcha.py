@@ -1,53 +1,34 @@
-from azure.ai.vision.imageanalysis import ImageAnalysisClient
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.vision.imageanalysis.models import VisualFeatures
+from openai import OpenAI
+
 from dotenv import load_dotenv
-import os
-import re  
+from uploadImage import upload_image
 
 
-from google.cloud import vision
+load_dotenv(".env",override=True)
 
+def get_captcha_code(imageUrl):
 
-def get_captcha_code_azure(imageUrl):
-    endpoint = os.getenv("AZURE_VISION_ENDPOINT")
-    apiKey = os.getenv("AZURE_VISION_KEY")
+    client = OpenAI()
+    result = client.chat.completions.create(
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {"type":"text",
+                    "text":"Print out all letters or numbers visible in the right order on this image. Do not print out anything else. Just the letters and numbers. Don't include whitespaces. The Output alway consists out of 6 characters."
+                    },
+                    {"type":"image_url",
+                    "image_url": {
+                        "url":imageUrl
+                    }
+                    }
+                ],
 
-    client = ImageAnalysisClient(endpoint=endpoint, credential=AzureKeyCredential(apiKey))
+            }
+        ],
+        max_tokens=300,
+        model="gpt-4-vision-preview",
 
-
-    result = client.analyze(
-        image_url=imageUrl,
-        visual_features=[VisualFeatures.READ],
     )
-
-    word = ""
-    if result.read is not None:
-        print("Read result:")
-        print(result.read)
-        for line in result.read.blocks[0].lines:
-            cleaned_text = re.sub(r'[^a-zA-Z0-9]', '', line.text)
-            word += cleaned_text
-    return word
-
-def get_captcha_code_google(imageUrl):
-    
-    client = vision.ImageAnnotatorClient()
-
-    image = vision.Image()
-    image.source.image_uri = imageUrl
-    response = client.text_detection(image=image)
-    texts = response.text_annotations
-
-
-    text = texts[0].description
-
-
-
-    if response.error.message:
-        raise Exception(
-            "{}\nFor more info on error messages, check: "
-            "https://cloud.google.com/apis/design/errors".format(response.error.message)
-        )
-    return text
-
+    captcha_code = result.choices[0].message.content
+    return captcha_code
