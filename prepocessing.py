@@ -1,9 +1,6 @@
 import cv2
 import numpy as np
 from PIL import Image
-import pytesseract
-import os
-import imutils
 
 
 def bfs(visited, queue, array, node):
