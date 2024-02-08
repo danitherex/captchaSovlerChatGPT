@@ -9,15 +9,24 @@ import json
 from captcha import get_captcha_code
 from uploadImage import upload_image_from_base64
 
+from airflow.models import Variable
+
 load_dotenv(".env",override=True)
 
-sport_email = os.getenv("SPORT_EMAIL")
-sport_password = os.getenv("SPORT_PASSWORD")
-sport_url = os.getenv("SPORT_URL")
-_captcha = os.getenv("CAPTCHA")
+#sport_email = os.getenv("SPORT_EMAIL")
+#sport_password = os.getenv("SPORT_PASSWORD")
+#sport_url = os.getenv("SPORT_URL")
+#_captcha = os.getenv("CAPTCHA")
+
+sport_email = Variable.get("SPORT_EMAIL")
+sport_password = Variable.get("SPORT_PASSWORD")
+sport_url = Variable.get("SPORT_URL")
+_captcha = Variable.get("CAPTCHA")
+
 captcha = _captcha.lower() == "true"
 
-target_weekday_time = json.loads(os.getenv("WEEKDAYS"))
+#target_weekday_time = json.loads(os.getenv("WEEKDAYS"))
+target_weekday_time = json.loads(Variable.get("WEEKDAYS"))
 
 
 def sign_up():
