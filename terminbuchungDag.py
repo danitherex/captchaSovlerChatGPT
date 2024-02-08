@@ -7,12 +7,12 @@ default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'start_date': datetime(2024,2,9,7),
-    'retries': 1,
+    'retries': 3,
     "catchup":False,
     'retry_delay': timedelta(minutes=1),
 }
 
-dag = DAG('Termin-Buchung', default_args=default_args, schedule_interval=None)  # Runs every 10 minutes
+dag = DAG('Termin-Buchung', default_args=default_args, schedule_interval=None) 
 
 def task():
     from termin_buchung import sign_up

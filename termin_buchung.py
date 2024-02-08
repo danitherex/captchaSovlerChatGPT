@@ -127,6 +127,7 @@ def sign_up():
         sign_up()
     except Exception as e:
         print("An error occured: ", str(e))
+        raise e
         
     driver.quit()
 
