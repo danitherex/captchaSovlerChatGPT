@@ -6,13 +6,13 @@ from datetime import datetime, timedelta
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'start_date': datetime(2024,2,9,7),
+    'start_date': datetime(2024,2,9,7,0,0),
     'retries': 3,
     "catchup":False,
     'retry_delay': timedelta(minutes=1),
 }
 
-dag = DAG('Termin-Buchung', default_args=default_args, schedule_interval=None) 
+dag = DAG('Termin-Buchung', default_args=default_args, schedule_interval="0 7 * * *") 
 
 def task():
     from termin_buchung import sign_up
