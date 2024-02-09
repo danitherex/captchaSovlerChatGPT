@@ -12,7 +12,7 @@ default_args = {
     'retry_delay': timedelta(minutes=1),
 }
 
-dag = DAG('Termin-Buchung', default_args=default_args, schedules="0 7 * * *") 
+dag = DAG('Termin-Buchung', default_args=default_args, schedule_interval ="0 7 * * *") 
 
 def task():
     from termin_buchung import sign_up
