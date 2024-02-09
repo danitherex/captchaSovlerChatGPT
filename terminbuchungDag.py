@@ -1,6 +1,7 @@
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from datetime import datetime, timedelta
+from termin_buchung import sign_up
 
 
 default_args = {
@@ -15,7 +16,6 @@ default_args = {
 dag = DAG('Termin-Buchung', default_args=default_args, schedule="0 7 * * *") 
 
 def task():
-    from termin_buchung import sign_up
     sign_up()
 
 t1 = PythonOperator(
