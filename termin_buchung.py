@@ -9,32 +9,29 @@ import json
 from captcha import get_captcha_code
 from uploadImage import upload_image_from_base64
 
-from airflow.models import Variable
 
 load_dotenv(".env",override=True)
 
-#sport_email = os.getenv("SPORT_EMAIL")
-#sport_password = os.getenv("SPORT_PASSWORD")
-#sport_url = os.getenv("SPORT_URL")
-#_captcha = os.getenv("CAPTCHA")
-
-sport_email = Variable.get("SPORT_EMAIL")
-sport_password = Variable.get("SPORT_PASSWORD")
-sport_url = Variable.get("SPORT_URL")
-_captcha = Variable.get("CAPTCHA")
+sport_email = os.getenv("SPORT_EMAIL")
+sport_password = os.getenv("SPORT_PASSWORD")
+sport_url = os.getenv("SPORT_URL")
+_captcha = os.getenv("CAPTCHA")
 
 captcha = _captcha.lower() == "true"
 
-#target_weekday_time = json.loads(os.getenv("WEEKDAYS"))
-target_weekday_time = json.loads(Variable.get("WEEKDAYS"))
+target_weekday_time = json.loads(os.getenv("WEEKDAYS"))
 
 
 def sign_up():
 
-    options = webdriver.FirefoxOptions()
-    options.add_argument('--headless')
+    options = webdriver.ChromeOptions()
+    options.add_experimental_option("detach", True)
+    options.add_argument("--headless")
+    options.add_argument("--no-sandbox")
+    options.add_argument("--disable-gpu")
 
-    driver = webdriver.Firefox(options=options)
+
+    driver = webdriver.Chrome(options=options)
 
     driver.get(sport_url)
     

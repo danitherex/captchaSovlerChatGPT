@@ -1,5 +1,5 @@
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
+from airflow.operators.bash_operator import BashOperator
 from datetime import datetime, timedelta
 import sys
 
@@ -17,13 +17,8 @@ default_args = {
 
 dag = DAG('Termin-Buchung', default_args=default_args, schedule_interval ="0 7 * * *") 
 
-def task():
-    from termin_buchung import sign_up
-    sign_up()
-
-t1 = PythonOperator(
-    task_id='sign_up',
-    python_callable=task,
-    dag=dag)
-
-t1
+t1 = BashOperator(
+    task_id='book-termin',
+    bash_command='docker-compose up',
+    dag=dag,
+)
