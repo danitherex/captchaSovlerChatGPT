@@ -1,6 +1,9 @@
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from datetime import datetime, timedelta
+import sys
+
+sys.path.append("/root/airflow/dags/captchaSovlerChatGPT")
 
 
 default_args = {
