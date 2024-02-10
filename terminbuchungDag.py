@@ -15,7 +15,7 @@ default_args = {
     'retry_delay': timedelta(minutes=1),
 }
 
-dag = DAG('Termin-Buchung', default_args=default_args, schedule_interval ="0 19 * * *") 
+dag = DAG('Termin-Buchung', default_args=default_args, schedule_interval ="59 18 * * *") 
 
 t1 = BashOperator(
     task_id='book-termin',

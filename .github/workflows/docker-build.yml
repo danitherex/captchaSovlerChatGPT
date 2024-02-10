@@ -3,8 +3,8 @@ name: Build and Push Docker Image
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags: 
+      - 'v*'
 
 jobs:
   build-and-push:
@@ -24,13 +24,19 @@ jobs:
         username: ${{ secrets.DOCKER_HUB_USERNAME }}
         password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
+    - name: Extract version from tag
+      id: tag_version
+      run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/v}
+
     - name: Build and Push Docker Image
       uses: docker/build-push-action@v5
       with:
         context: .
         file: ./Dockerfile
         push: true
-        tags: danitherex/buchungsport:latest
+        tags: 
+          danitherex/buchungsport:latest
+          danitherex/buchungsport:${{ steps.tag_version.outputs.VERSION }}
 
     - name: Log out of Docker Hub
       run: docker logout
