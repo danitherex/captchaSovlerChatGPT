@@ -30,7 +30,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: danitherex/buchungSport:latest
+        tags: danitherex/buchungsport:latest
 
     - name: Log out of Docker Hub
       run: docker logout

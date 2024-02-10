@@ -25,4 +25,4 @@ Hinweis: Bitte stellen Sie sicher, dass Sie über die erforderlichen Anmeldeinfo
 ## Verwendung
 
 1. Führe das Docker-Image mit folgendem Befehl aus:
-`docker run --env-file .env danitherex/buchungSport`
+`docker run --env-file .env danitherex/buchungsport`
