@@ -3,8 +3,8 @@ name: Build and Push Docker Image
 on:
   push:
     branches: [ main ]
-    tags: 
-      - 'v*'
+    tags:
+      - "v*.*.*"
 
 jobs:
   build-and-push:
@@ -34,9 +34,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: 
-          danitherex/buchungsport:latest
-          danitherex/buchungsport:${{ steps.tag_version.outputs.VERSION }}
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/buchungsport:latest, ${{ secrets.DOCKER_HUB_USERNAME }}/buchungsport:${{ steps.tag_version.outputs.VERSION }}
 
     - name: Log out of Docker Hub
       run: docker logout
