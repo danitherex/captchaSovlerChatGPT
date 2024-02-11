@@ -3,14 +3,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException
-from dotenv import load_dotenv
 import os
 import json
 from captcha import get_captcha_code
 from uploadImage import upload_image_from_base64
 
-
-load_dotenv(".env",override=True)
 
 sport_email = os.getenv("SPORT_EMAIL")
 sport_password = os.getenv("SPORT_PASSWORD")

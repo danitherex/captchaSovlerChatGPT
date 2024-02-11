@@ -1,10 +1,5 @@
 from openai import OpenAI
-
-from dotenv import load_dotenv
 from uploadImage import upload_image
-
-
-load_dotenv(".env",override=True)
 
 def get_captcha_code(imageUrl):
 
