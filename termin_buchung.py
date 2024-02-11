@@ -117,6 +117,7 @@ def sign_up():
                 break      
     except TimeoutException as e:
         print("There seems not to be any free slots available")
+        raise e
     except IndexError as e:
         sign_up()
     except Exception as e:
