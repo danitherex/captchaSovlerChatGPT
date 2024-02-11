@@ -15,10 +15,8 @@ def upload_image(imageFile):
     
     preprocessed_image = preprocess_image(imageFile)
     
-    #connection_string = os.getenv('AZURE_CONNECTION_STRING')
-    #container_name = os.getenv('AZURE_BLOB_CONTAINER_NAME')
-    connection_string = Variable.get("AZURE_CONNECTION_STRING")
-    container_name = Variable.get("AZURE_BLOB_CONTAINER_NAME")
+    connection_string = os.getenv('AZURE_CONNECTION_STRING')
+    container_name = os.getenv('AZURE_BLOB_CONTAINER_NAME')
     
     try:
         # Create the BlobServiceClient that is used to call the Blob service for the storage account
