@@ -19,6 +19,6 @@ dag = DAG('Termin-Buchung', default_args=default_args, schedule_interval ="59 18
 
 t1 = BashOperator(
     task_id='book-termin',
-    bash_command='docker run --env-file .env danitherex/buchungsport',
+    bash_command='docker run --env-file /root/airflow/dags/captchaSovlerChatGPT/.env danitherex/buchungsport',
     dag=dag,
 )
