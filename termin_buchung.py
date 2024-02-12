@@ -7,6 +7,7 @@ import os
 import json
 from captcha import get_captcha_code
 from uploadImage import upload_image_from_base64
+import sys
 
 
 sport_email = os.getenv("SPORT_EMAIL")
@@ -20,6 +21,8 @@ target_weekday_time = json.loads(os.getenv("WEEKDAYS"))
 
 
 def sign_up():
+
+    errorOccured = False
 
     options = webdriver.ChromeOptions()
     options.add_experimental_option("detach", True)
@@ -117,14 +120,18 @@ def sign_up():
                 break      
     except TimeoutException as e:
         print("There seems not to be any free slots available")
-        raise e
+        errorOccured = True
     except IndexError as e:
-        sign_up()
+        errorOccured = True
     except Exception as e:
         print("An error occured: ", str(e))
-        raise e
-        
+        errorOccured = True
+    
     driver.quit()
+
+    if errorOccured:
+        sys.exit(1)
+        
 
 def retrieve_row(rows):
     for row in rows:
