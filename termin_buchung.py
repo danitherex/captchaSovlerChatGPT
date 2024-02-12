@@ -99,6 +99,9 @@ def sign_up():
                     captcha_base64_image = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.width100"))).get_attribute("src")
                     captcha_url = upload_image_from_base64(captcha_base64_image)
                     captcha_code = get_captcha_code(captcha_url)
+                    if(len(captcha_code) > 7):
+                        print("Captcha code is not valid")
+                        sys.exit(1)
                     captcha_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "BS_F_captcha")))
                     captcha_input.send_keys(captcha_code)
                     print(captcha_code)               
@@ -123,6 +126,7 @@ def sign_up():
         errorOccured = True
     except IndexError as e:
         errorOccured = True
+        print("There seems not to be any free slots available")
     except Exception as e:
         print("An error occured: ", str(e))
         errorOccured = True
