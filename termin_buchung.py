@@ -94,6 +94,10 @@ def sign_up():
                 
                 continueButton = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "bs_submit")))
                 continueButton.click()
+
+                captcha_url=""
+                captcha_input=""
+
                 if(captcha):
                     #Captcha handling here
                     captcha_base64_image = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.width100"))).get_attribute("src")
@@ -113,8 +117,20 @@ def sign_up():
                     print("Booking failed")
                     if(captcha):
                         try:
-                            WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CSS_SELECTOR, "NONEXISITANT")))
-                            #sign_up()
+                            captcha_code = get_captcha_code(captcha_url)
+                            if(len(captcha_code) > 7):
+                                print("Captcha code is not valid")
+                                sys.exit(1)
+                            captcha_input.send_keys(captcha_code)
+                            binding_booking.click()
+                            try:
+                                WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#bs_form_main > div.bs_form_row.bs_exspace > div.bs_text_red.bs_text_big")))
+                                print("Booking failed")
+                            except Exception as e:
+                                print(e.__str__())
+                                #kind of expception
+                                print(e.with_traceback())                                
+                                print("Booking successful") 
                         except Exception as e:
                             print("Booking successful")
                 except Exception as e:
