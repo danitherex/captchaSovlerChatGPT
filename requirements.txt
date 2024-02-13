@@ -1,7 +1,8 @@
-openai
+#openai
 pillow
 azure-storage-blob 
 selenium
-opencv-python
-python-dotenv
-pytesseract
+#opencv-python
+#python-dotenv
+#pytesseract
+google-generativeai
