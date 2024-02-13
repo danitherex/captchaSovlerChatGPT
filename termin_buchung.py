@@ -22,6 +22,8 @@ target_weekday_time = json.loads(os.getenv("WEEKDAYS"))
 
 def sign_up():
 
+    errorOccured = False
+
     options = webdriver.ChromeOptions()
     options.add_experimental_option("detach", True)
     options.add_argument("--headless")
@@ -93,8 +95,6 @@ def sign_up():
                 continueButton = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "bs_submit")))
                 continueButton.click()
                 
-                captcha_url = ""
-                captcha_input = None
                 binding_booking = None
                 
                 if(captcha):
@@ -120,13 +120,19 @@ def sign_up():
                 break      
     except TimeoutException as e:
         print("There seems not to be any free slots available")
+        errorOccured = True
     except IndexError as e:
-        sign_up()
+        errorOccured = True
+        print("There seems not to be any free slots available")
     except Exception as e:
         print("An error occured: ", str(e))
-        raise e
-        
+        errorOccured = True
+    
     driver.quit()
+
+    if errorOccured:
+        sys.exit(1)
+        
 
 def retrieve_row(rows):
     for row in rows:
