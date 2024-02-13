@@ -101,7 +101,7 @@ def sign_up():
                 binding_booking = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.bs_right > input:nth-child(1)")))
 
                 if(captcha):
-                    for _ in range(0, 3):
+                    for i in range(0, 3):
                         try:
                             solveCaptcha(driver)
                             WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#bs_form_main > div.bs_form_row.bs_exspace > div.bs_text_red.bs_text_big")))
@@ -112,6 +112,10 @@ def sign_up():
                                 break
                             else:
                                 print("ChatGPT detected captcha. Retrying...")
+                        if(i == 2):
+                            print("Failed to solve captcha. Exiting...")
+                            errorOccured = True
+                            break
                 else:
                     binding_booking.click()
       
