@@ -7,6 +7,7 @@ import os
 import json
 from captcha import get_captcha_code
 from uploadImage import upload_image_from_base64
+import sys
 
 
 sport_email = os.getenv("SPORT_EMAIL")
@@ -91,14 +92,14 @@ def sign_up():
                 
                 continueButton = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "bs_submit")))
                 continueButton.click()
+                
+                captcha_url = ""
+                captcha_input = None
+                binding_booking = None
+                
                 if(captcha):
                     #Captcha handling here
-                    captcha_base64_image = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.width100"))).get_attribute("src")
-                    captcha_url = upload_image_from_base64(captcha_base64_image)
-                    captcha_code = get_captcha_code(captcha_url)
-                    captcha_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "BS_F_captcha")))
-                    captcha_input.send_keys(captcha_code)
-                    print(captcha_code)               
+                    solveCaptcha(driver)
                 
                 binding_booking = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.bs_right > input:nth-child(1)")))
                 binding_booking.click()
@@ -106,9 +107,11 @@ def sign_up():
                     WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#bs_form_main > div.bs_form_row.bs_exspace > div.bs_text_red.bs_text_big")))
                     print("Booking failed")
                     if(captcha):
+                        solveCaptcha(driver)
                         try:
-                            WebDriverWait(driver, 30).until(EC.presence_of_element_located((By.CSS_SELECTOR, "NONEXISITANT")))
-                            #sign_up()
+                            WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#bs_form_main > div.bs_form_row.bs_exspace > div.bs_text_red.bs_text_big")))
+                            print("Booking failed")
+                            sys.exit(1)
                         except Exception as e:
                             print("Booking successful")
                 except Exception as e:
@@ -135,6 +138,14 @@ def retrieve_row(rows):
             target_time = target_time
             if time == target_time and weekday == target_weekday:
                 return row
+            
+def solveCaptcha(driver):
+    captcha_base64_image = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.width100"))).get_attribute("src")
+    captcha_url = upload_image_from_base64(captcha_base64_image)
+    captcha_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "BS_F_captcha")))
+    captcha_code = get_captcha_code(captcha_url)
+    print(captcha_code)               
+    captcha_input.send_keys(captcha_code)
         
 if __name__ == "__main__":
     sign_up()
