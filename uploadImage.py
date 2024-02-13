@@ -4,7 +4,7 @@ from io import BytesIO
 import uuid
 from azure.storage.blob import BlobServiceClient
 import os
-from prepocessing import preprocess_image
+#from prepocessing import preprocess_image
 
 def upload_image_from_base64(base64_string):
     imageFile = convert_base64_to_image(base64_string)
@@ -13,8 +13,9 @@ def upload_image_from_base64(base64_string):
 
 def upload_image(imageFile):
     
-    preprocessed_image = preprocess_image(imageFile)
+    #preprocessed_image = preprocess_image(imageFile)
     
+    preprocessed_image=None
     connection_string = os.getenv('AZURE_CONNECTION_STRING')
     container_name = os.getenv('AZURE_BLOB_CONTAINER_NAME')
     
