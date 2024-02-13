@@ -25,5 +25,8 @@ def get_captcha_code(imageUrl):
         model="gpt-4-vision-preview",
 
     )
-    captcha_code = result.choices[0].message.content
+    try:
+        captcha_code = result.choices[0].message.content
+    except:
+        captcha_code = result
     return captcha_code

@@ -147,7 +147,7 @@ def solveCaptcha(driver):
     captcha_base64_image = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.width100"))).get_attribute("src")
     captcha_url = upload_image_from_base64(captcha_base64_image)
     captcha_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "BS_F_captcha")))
-    captcha_code = get_captcha_code(captcha_url)
+    captcha_code = str(get_captcha_code(captcha_url))
     print(captcha_code)               
     if(len(captcha_code) > 7):
         captcha_code = "trying again..."
