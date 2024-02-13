@@ -25,10 +25,11 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy the Selenium script to the working directory
-COPY captcha.py .
+#COPY captcha.py .
 COPY prepocessing.py .
 COPY termin_buchung.py .
 COPY uploadImage.py . 
+COPY captcha_gemini.py .
 
 
 # Add the environment variables
