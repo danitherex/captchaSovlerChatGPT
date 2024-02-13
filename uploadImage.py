@@ -32,7 +32,8 @@ def upload_image(imageFile):
             
         blob_url = f"{blob_client.url}"
         print(f"Blob URL: {blob_url}")
-        #os.remove(imageFile)
+        os.remove(imageFile)
+        os.remove(preprocessed_image)
 
         return blob_url
         

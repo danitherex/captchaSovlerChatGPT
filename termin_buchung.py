@@ -49,13 +49,15 @@ def sign_up():
     try:
         try:
             # Close or accept the cookie notice
-            cookie_notice_accept_button = WebDriverWait(driver,3).until(EC.element_to_be_clickable((By.CSS_SELECTOR, "div.cookie-reject:nth-child(3)")))
-            cookie_notice_accept_button.click()
+            cookie_notice_accept_button = WebDriverWait(driver,5).until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".cookie-notice > .cookie-accept")))
+            driver.execute_script("arguments[0].click();", cookie_notice_accept_button)
         except Exception as e:
             print("Cookie notice not found or could not be closed.", str(e))
+        print(row.text)
         buchenBtn = WebDriverWait(row, 120).until(EC.element_to_be_clickable((By.CSS_SELECTOR, ".bs_btn_buchen")))
 
-        buchenBtn.click()
+        driver.execute_script("arguments[0].click();", buchenBtn)
+
         
         WebDriverWait(driver, 10).until(EC.number_of_windows_to_be(2))
         windows = driver.window_handles
@@ -95,35 +97,27 @@ def sign_up():
                 continueButton = WebDriverWait(driver, 10).until(EC.element_to_be_clickable((By.ID, "bs_submit")))
                 continueButton.click()
                 
-                binding_booking = None
-                
-                if(captcha):
-                    #Captcha handling here
-                    solveCaptcha(driver)
                 
                 binding_booking = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.bs_right > input:nth-child(1)")))
-                binding_booking.click()
-                try:
-                    WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#bs_form_main > div.bs_form_row.bs_exspace > div.bs_text_red.bs_text_big")))
-                    print("Booking failed")
-                    if(captcha):
-                        solveCaptcha(driver)
-                        try:
-                            WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#bs_form_main > div.bs_form_row.bs_exspace > div.bs_text_red.bs_text_big")))
-                            print("Booking failed")
-                            sys.exit(1)
-                        except Exception as e:
-                            print("Booking successful")
-                except Exception as e:
-                    print("Booking successful")
 
-                break      
+                if(captcha):
+                    for _ in range(0, 3):
+                        try:
+                            solveCaptcha(driver)
+                            WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#bs_form_main > div.bs_form_row.bs_exspace > div.bs_text_red.bs_text_big")))
+                            print("Captcha failed. Retrying...")
+                        except Exception as e:
+                            if not(e.code =="content_policy_violation"):
+                                print("Booking successful")
+                                break
+                            else:
+                                print("ChatGPT detected captcha. Retrying...")
+                else:
+                    binding_booking.click()
+      
     except TimeoutException as e:
         print("There seems not to be any free slots available")
         errorOccured = True
-    except IndexError as e:
-        errorOccured = True
-        print("There seems not to be any free slots available")
     except Exception as e:
         print("An error occured: ", str(e))
         errorOccured = True
@@ -136,8 +130,8 @@ def sign_up():
 
 def retrieve_row(rows):
     for row in rows:
-        time = row.find_element(By.CSS_SELECTOR, ".bs_szeit").text
-        weekday = row.find_element(By.CSS_SELECTOR, ".bs_stag").text
+        time = WebDriverWait(row, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".bs_szeit"))).text
+        weekday = WebDriverWait(row, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".bs_stag"))).text
                 
         for _target_weekday, target_time in target_weekday_time.items():
             target_weekday = _target_weekday
@@ -151,7 +145,11 @@ def solveCaptcha(driver):
     captcha_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "BS_F_captcha")))
     captcha_code = get_captcha_code(captcha_url)
     print(captcha_code)               
+    if(len(captcha_code) > 7):
+        captcha_code = "trying again..."
     captcha_input.send_keys(captcha_code)
+    binding_booking = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "div.bs_right > input:nth-child(1)")))
+    binding_booking.click()
         
 if __name__ == "__main__":
     sign_up()
