@@ -107,11 +107,9 @@ def sign_up():
                             WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#bs_form_main > div.bs_form_row.bs_exspace > div.bs_text_red.bs_text_big")))
                             print("Captcha failed. Retrying...")
                         except Exception as e:
-                            if not(e.code =="content_policy_violation"):
-                                print("Booking successful")
-                                break
-                            else:
-                                print("ChatGPT detected captcha. Retrying...")
+                            print("Booking successful")
+                            print("An error occured: ", str(e))
+                            break
                         if(i == 2):
                             print("Failed to solve captcha. Exiting...")
                             errorOccured = True
