@@ -1,36 +1,38 @@
-import google.generativeai as genai
+import requests
 import os
-import PIL.Image
 
-def get_captcha_code(imagePath):
-    
-    img = PIL.Image.open(imagePath)
+def get_captcha_code(base64imageString):
     GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+    PROXY = os.getenv("PROXY")
+    
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-pro-vision:generateContent?key={GEMINI_API_KEY}"
+        
+    proxies = {
+        "http": f"http://{PROXY}",
+        "https": f"http://{PROXY}"
+    }
+    body = {
+      "contents": [{
+        "parts": [
+          {"text": "Act as if you are a software program which purpose it is to solve text captcha imges. Print out all letters or numbers visible from left to right on this image. Only print the letters and numbers. Don't include whitespaces. The Output should always consists out of 6 uppercase characters without whitespaces. With big probability it will be a mix of letters and numbers and not only one of them."}, 
+          {
+            "inline_data": {
+              "mime_type": "image/jpeg",
+              "data": base64imageString
+            }
+          }
+        ]
+      }]
+    }
 
-    genai.configure(api_key=GEMINI_API_KEY)
-
-    model = genai.GenerativeModel('models/gemini-pro-vision')
-
-    response = model.generate_content(["Print out all letters or numbers visible in the right order on this image. Do not print out anything else. Just the letters and numbers. Don't include whitespaces. The Output alway consists out of 6 characters. There cannot be other characters than letters and numbers.",img])
-
+    response = requests.post(url, json=body, proxies=proxies)
+    
     text = ""
-
-    try :
-        text = extract_string(response.candidates[0].content.parts[0])
+    try:
+        text = str(response.json()["candidates"][0]["content"]["parts"][0]["text"]).upper()
+        text = text.replace(" ", "")
     except Exception as e:
         print(e)
         text = "Error"
-
-    os.remove(imagePath)
     print(text)
     return text
-
-
-def extract_string(output):
-    # Find the start and end indices of the double quotes
-    output = str(output)
-    start = output.find('"') + 1
-    end = output.rfind('"')
-
-    # Extract the string inside the double quotes and remove all spaces
-    return output[start:end].replace(' ', '')

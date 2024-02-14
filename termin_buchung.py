@@ -6,7 +6,7 @@ from selenium.common.exceptions import TimeoutException
 import os
 import json
 from captcha_gemini import get_captcha_code
-from uploadImage import convert_base64_to_image
+from uploadImage import split_base64_into_image_string
 import sys
 
 
@@ -107,15 +107,21 @@ def sign_up():
                             WebDriverWait(driver, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#bs_form_main > div.bs_form_row.bs_exspace > div.bs_text_red.bs_text_big")))
                             print("Captcha failed. Retrying...")
                         except Exception as e:
-                            print("Booking successful")
-                            print("An error occured: ", str(e))
-                            break
+                            try:
+                                WebDriverWait(driver, 2).until(EC.presence_of_element_located((By.CSS_SELECTOR, "#bs_form_main > div > div > div.bs_text_red.bs_text_big")))
+                                print("Couldnt solve captcha.")
+                                errorOccured = True
+                                break
+                            except Exception as e:
+                                print("Booking successful")
+                                break
                         if(i == 2):
                             print("Failed to solve captcha. Exiting...")
                             errorOccured = True
                             break
                 else:
                     binding_booking.click()
+                    print("Booking successful")
       
     except TimeoutException as e:
         print("There seems not to be any free slots available")
@@ -143,9 +149,9 @@ def retrieve_row(rows):
             
 def solveCaptcha(driver):
     captcha_base64_image = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.CSS_SELECTOR, "img.width100"))).get_attribute("src")
-    captcha_image_path = convert_base64_to_image(captcha_base64_image)
+    captcha_base64_only_image = split_base64_into_image_string(captcha_base64_image)
     captcha_input = WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.ID, "BS_F_captcha")))
-    captcha_code = str(get_captcha_code(captcha_image_path))
+    captcha_code = str(get_captcha_code(captcha_base64_only_image))
     print(captcha_code)               
     if(len(captcha_code) > 7):
         captcha_code = "trying again..."

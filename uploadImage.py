@@ -43,9 +43,13 @@ def upload_image(imageFile):
         print(ex)
     
 def convert_base64_to_image(base64_string):
-    base64_image = base64_string.split(',')[1]
+    base64_image = split_base64_into_image_string(base64_string)
     image_data = base64.b64decode(base64_image)
     image = Image.open(BytesIO(image_data))
     random_file_name = f"{uuid.uuid4()}.png"
     image.save(random_file_name)
     return random_file_name
+
+def split_base64_into_image_string(base64_string):
+    base64_image = base64_string.split(',')[1]
+    return base64_image
