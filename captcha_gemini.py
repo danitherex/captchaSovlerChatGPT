@@ -17,7 +17,8 @@ def get_captcha_code(imagePath):
 
     try :
         text = extract_string(response.candidates[0].content.parts[0])
-    except:
+    except Exception as e:
+        print(e)
         text = "Error"
 
     os.remove(imagePath)
