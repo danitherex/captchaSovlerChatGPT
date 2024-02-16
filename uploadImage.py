@@ -50,6 +50,11 @@ def convert_base64_to_image(base64_string):
     image.save(random_file_name)
     return random_file_name
 
+def convert_image_to_base64(image_path):
+    with open(image_path, "rb") as img_file:
+        return base64.b64encode(img_file.read()).decode('utf-8')
+    
+
 def split_base64_into_image_string(base64_string):
     base64_image = base64_string.split(',')[1]
     return base64_image

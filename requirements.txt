@@ -3,6 +3,6 @@ pillow
 azure-storage-blob 
 selenium
 requests
-#opencv-python
+opencv-python
 #python-dotenv
 #pytesseract
