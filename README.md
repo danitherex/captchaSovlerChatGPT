@@ -4,9 +4,9 @@
 
 ## Beschreibung
 
-Dieses Dockerfile ermöglicht eine automatische Anmeldung beim Hochschulsport in Mannheim.
+Dieses [Dockerimage](https://hub.docker.com/repository/docker/danitherex/buchungsport/general) ermöglicht eine automatische Anmeldung beim Hochschulsport in Mannheim.
 
-Mit diesem Dockerfile können Sie eine Anwendung erstellen, die automatisch eine Anmeldung beim Hochschulsport in Mannheim durchführt. Die Anwendung basiert auf Docker und verwendet die angegebenen Konfigurationen, um den Anmeldeprozess zu automatisieren.
+Mit diesem [Dockerimage](https://hub.docker.com/repository/docker/danitherex/buchungsport/general) können Sie eine Anwendung erstellen, die automatisch eine Anmeldung beim Hochschulsport in Mannheim durchführt. Die Anwendung basiert auf Docker und verwendet die angegebenen Konfigurationen, um den Anmeldeprozess zu automatisieren.
 
 Verwendung:
 - Stellen Sie sicher, dass Docker auf Ihrem System installiert ist.
