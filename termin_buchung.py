@@ -9,6 +9,7 @@ from captcha_gemini import get_captcha_code
 from prepocessing import preprocess_image
 from uploadImage import convert_base64_to_image, convert_image_to_base64, split_base64_into_image_string
 import sys
+from datetime import datetime, timedelta
 
 
 sport_email = os.getenv("SPORT_EMAIL")
@@ -138,6 +139,18 @@ def sign_up():
         
 
 def retrieve_row(rows):
+    tomorrow_date = datetime.now() + timedelta(days=1)
+    tomorrow_weekday_english  = tomorrow_date.strftime('%A')
+    english_to_german_initials = {
+        'Monday': 'Mo',
+        'Tuesday': 'Di',
+        'Wednesday': 'Mi',
+        'Thursday': 'Do',
+        'Friday': 'Fr',
+        'Saturday': 'Sa',
+        'Sunday': 'So'
+    }
+    tomorrow_weekday = english_to_german_initials[tomorrow_weekday_english]
     for row in rows:
         time = WebDriverWait(row, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".bs_szeit"))).text
         weekday = WebDriverWait(row, 3).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".bs_stag"))).text
@@ -145,7 +158,7 @@ def retrieve_row(rows):
         for _target_weekday, target_time in target_weekday_time.items():
             target_weekday = _target_weekday
             target_time = target_time
-            if time == target_time and weekday == target_weekday:
+            if time == target_time and weekday == target_weekday and weekday == tomorrow_weekday :
                 return row
             
 def solveCaptcha(driver):
