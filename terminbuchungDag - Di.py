@@ -14,7 +14,7 @@ default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
     'start_date': datetime(2024,2,19),
-    'retries': 2,
+    'retries': 3,
     "catchup":False,
     'retry_delay': timedelta(minutes=1),
 }
