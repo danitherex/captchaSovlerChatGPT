@@ -19,7 +19,7 @@ default_args = {
     'retry_delay': timedelta(minutes=1),
 }
 
-dag = DAG('Termin-Buchung (Di)', default_args=default_args, schedule_interval ="14 20 * * *") 
+dag = DAG('Termin-Buchung_Di', default_args=default_args, schedule_interval ="14 20 * * *") 
 
 def pre_task_code():
     from discord_notifications import send_discord_webhook_notification
