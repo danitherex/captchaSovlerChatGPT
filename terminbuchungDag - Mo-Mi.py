@@ -16,7 +16,7 @@ default_args = {
     'start_date': datetime(2024,2,19),
     'retries': 4,
     "catchup":False,
-    'retry_delay': timedelta(minutes=1),
+    'retry_delay': timedelta(minutes=0),
 }
 
 dag = DAG('Termin-Buchung_Mo-Mi', default_args=default_args, schedule_interval ="59 18 * * *") 
